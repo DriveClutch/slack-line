@@ -11,11 +11,11 @@ dependencies:
   cache_directories:
     - node_modules
   override:
-    - npm install -g gulp
+#    - npm install -g gulp
     - npm prune && npm install
 
 test:
   override:
-    - gulp prod
+    - gulp
 
 
