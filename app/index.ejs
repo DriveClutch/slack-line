@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clutch Slack Feed</title>
+</head>
+<body>
+<div id="root"></div>
+<!-- inject:keys -->
+<script type="text/javascript">
+    window.clientId = '<%= slackClientId %>';
+    window.clientSecret = '<%= slackClientSecret %>';
+    window.channels = '<%= slackClientChannels %>';
+</script>
+<script type="application/javascript" src="dist/build/bundle.js"></script>
+</body>
+</html>

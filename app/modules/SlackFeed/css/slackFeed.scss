@@ -1,0 +1,68 @@
+@import "~clutch-ui-common/styleguide/variables.scss";
+@import "~clutch-ui-common/styleguide/mixins.scss";
+
+.line-clamp {
+  white-space: pre-wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 0 !important;
+}
+
+.outer-feed-wrapper {
+  height: 100%;
+  background-color: $lightest-gray;
+  padding: 5px;
+
+  .feed {
+    background-color: white;
+    margin: 5px;
+    padding: 5px;
+    height: calc(50% - 10px);
+    width: calc(50% - 10px);
+  }
+
+  .message {
+    padding: 10px;
+    .user-image {
+      padding-right: 10px;
+      padding-top: 5px;
+
+      img {
+        height: 36px;
+        width: 36px;
+      }
+    }
+
+    .message-content {
+      max-width: 93%;
+      .name-row {
+
+        h5 {
+          margin-right: 10px;
+        }
+
+        span {
+          font-size: 14px;
+          color: #aaa;
+        }
+      }
+
+      .message-text {
+        p {
+          white-space: pre-wrap;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+}
+
+.scroll-container {
+  overflow-y: auto;
+}
