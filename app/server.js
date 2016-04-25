@@ -80,7 +80,7 @@ app.get('/', function(req, res){
     res.render(path.join(__dirname + '/index.ejs'), {
         slackClientId: process.env.SLACK_CLIENT_ID,
         slackClientSecret: process.env.SLACK_CLIENT_SECRET,
-        slackClientChannels: process.env.SLACK_CLIENT_CHANNELS || 'xxx'
+        slackClientChannels: process.env.SLACK_CLIENT_CHANNELS
     });
 });
 
