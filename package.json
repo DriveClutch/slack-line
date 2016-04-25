@@ -65,6 +65,7 @@
     "gulp-zip": "^3.1.0",
     "less": "^2.6.1",
     "less-loader": "^2.2.3",
+    "lodash": "^4.6.1",
     "mocha": "^2.3.4",
     "run-sequence": "^1.1.5",
     "sass-loader": "^3.1.2",
