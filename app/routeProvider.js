@@ -29,7 +29,7 @@ function requireAuth(nextState, replace) {
         window.SLACK_TOKEN = token;
         replace('/home')
     } else {
-        window.location = 'https://slack.com/oauth/authorize?client_id=' + window.clientId + '&scope=client'
+        window.location = 'https://slack.com/oauth/authorize?client_id=' + window.clientId + '&scope=client&redirect_uri=' + window.redirectUrl
     }
 }
 
