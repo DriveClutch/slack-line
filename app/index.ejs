@@ -9,8 +9,7 @@
 <!-- inject:keys -->
 <script type="text/javascript">
     window.clientId = '<%= slackClientId %>';
-    window.clientSecret = '<%= slackClientSecret %>';
-    window.channels = '<%= slackClientChannels %>';
+    window.channels = '<%- slackClientChannels %>';
 </script>
 <script type="application/javascript" src="dist/build/bundle.js"></script>
 </body>

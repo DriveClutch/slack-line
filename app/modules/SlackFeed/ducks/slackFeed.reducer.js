@@ -148,14 +148,13 @@ export function rtmStart(token) {
     }
 }
 
-export function exchangeCodeForToken(code, clientId, clientSecret) {
+export function exchangeCodeForToken(code, clientId) {
     return {
         types: [CODE_FOR_TOKEN, CODE_FOR_TOKEN_SUCCESS, CODE_FOR_TOKEN_FAILURE],
         promise: (client) => client.post('/api/exchangeCode', {
             data: {
                 code: code,
-                clientId: clientId,
-                clientSecret: clientSecret
+                clientId: clientId
             }
         })
     }

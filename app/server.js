@@ -25,7 +25,7 @@ app.post('/api/rtmStart', function (req, res) {
 });
 
 app.post('/api/exchangeCode', function (req, res) {
-    request('https://slack.com/api/oauth.access?client_id=' + req.body.clientId + '&client_secret=' + req.body.clientSecret + '&code=' + req.body.code, function (error, response, body) {
+    request('https://slack.com/api/oauth.access?client_id=' + req.body.clientId + '&client_secret=' + process.env.SLACK_CLIENT_SECRET + '&code=' + req.body.code, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             res.json(JSON.parse(response.body));
         } else {
@@ -79,8 +79,7 @@ app.post('/api/groupHistory', function (req, res) {
 app.get('/', function(req, res){
     res.render(path.join(__dirname + '/index.ejs'), {
         slackClientId: process.env.SLACK_CLIENT_ID,
-        slackClientSecret: process.env.SLACK_CLIENT_SECRET,
-        slackClientChannels: process.env.SLACK_CLIENT_CHANNELS || 'xxx'
+        slackClientChannels: process.env.SLACK_CLIENT_CHANNELS
     });
 });
 

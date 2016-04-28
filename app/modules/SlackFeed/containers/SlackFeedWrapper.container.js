@@ -12,7 +12,7 @@ import { config } from '../../../config';
 class SlackFeedWrapper extends Component {
     componentDidMount(){
         if (window.SLACK_AUTH_CODE){
-            this.props.dispatch(exchangeCodeForToken(window.SLACK_AUTH_CODE, window.clientId, window.clientSecret)).then(response => {
+            this.props.dispatch(exchangeCodeForToken(window.SLACK_AUTH_CODE, window.clientId)).then(response => {
                 if (response && !response.error){
                     window.SLACK_TOKEN = response.result.access_token;
                     localStorage.setItem('SLACK_TOKEN', response.result.access_token);
@@ -191,7 +191,7 @@ class SlackFeedWrapper extends Component {
             <div className="flex flex-wrap" style={{height: '100%'}}>
                 {
                     config.channels.map(configChannel =>
-                        <div className="feed flex flex-column">
+                        <div className="feed flex flex-column" key={configChannel.name}>
                             <div className="underline-title-row"><h4>{configChannel.displayName || configChannel.name}</h4></div>
                             <div className="feed-messages scroll-container flex-1-1-auto">
                                 <div>

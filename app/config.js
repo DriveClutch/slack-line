@@ -1,4 +1,4 @@
 export var config = {
-    channels: window.slackClientChannels
+    channels: JSON.parse(window.channels)
 };
 
