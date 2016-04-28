@@ -5,9 +5,9 @@ WORKDIR /usr/src/app
 
 COPY server-package.json /usr/src/app/package.json
 RUN npm install
-COPY slack-line/server.js /usr/src/app/
-COPY slack-line/index.ejs /usr/src/app/
-COPY slack-line/bundle.js /usr/src/app/dist/build/bundle.js
+COPY dist/slack-line/server.js /usr/src/app/
+COPY dist/slack-line/index.ejs /usr/src/app/
+COPY dist/slack-line/bundle.js /usr/src/app/dist/build/bundle.js
 
 EXPOSE 3333
 

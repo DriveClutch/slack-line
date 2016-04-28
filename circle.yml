@@ -17,5 +17,13 @@ dependencies:
 test:
   override:
     - gulp
+  post:
+    - unzip ${HOME}/${CIRCLE_PROJECT_REPONAME}/dist/clutch-slack-feed.zip -d ${HOME}/${CIRCLE_PROJECT_REPONAME}/dist/slack-line
 
-
+deployment:
+  docker_hub:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker build -t driveclutch/slack-line:latest .
+      - docker push driveclutch/slack-line:latest
