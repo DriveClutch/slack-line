@@ -162,6 +162,7 @@ class SlackFeedWrapper extends Component {
     }
 
     getUserProfileImage(user, message){
+        console.log(message.toJS())
         if (message.get('icons')){
             return message.get('icons').get('image_24') || message.get('icons').get('image_32') || message.get('icons').get('image_48') || message.get('icons').get('image_64')
         } else {
@@ -172,14 +173,21 @@ class SlackFeedWrapper extends Component {
     removeURLs(string){
         var returnString = string;
         var start = returnString.indexOf('<http');
+        var flippedStart = returnString.indexOf('flipped <http');
         var end;
 
         var multiParse = false;
-
-        if (start > -1){
+        if (flippedStart > -1){
+            multiParse = true;
+            flippedStart += 8;
+            let split = returnString.substr(flippedStart, returnString.indexOf('|', flippedStart) - flippedStart + 1);
+            let arr = returnString.split(split);
+            arr[arr.length -1] = arr[arr.length -1].replace(/(>)/, '');
+            returnString = arr.join('')
+        } else if (start > -1){
             multiParse = true;
             let split = returnString.substr(start, returnString.indexOf('>', start) - start + 1);
-            returnString = returnString.split(split).join()
+            returnString = returnString.split(split).join('')
         }
 
         return multiParse ? this.removeURLs(returnString) : returnString;
