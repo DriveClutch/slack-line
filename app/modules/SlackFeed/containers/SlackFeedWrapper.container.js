@@ -69,7 +69,7 @@ class SlackFeedWrapper extends Component {
             }
 
         });
-
+``
         return Promise.all(promises);
     }
 
@@ -102,7 +102,7 @@ class SlackFeedWrapper extends Component {
                                         (attachment.get('fields') || Immutable.List([])).map((field, index) =>
                                             <div className="message-field" key={index}>
                                                 <h5>{field.get('title')}</h5>
-                                                <p>{field.get('value')}</p>
+                                                <p>{this.removeURLs(field.get('value'))}</p>
                                             </div>
                                         )
                                     }
@@ -113,6 +113,9 @@ class SlackFeedWrapper extends Component {
                             </div>
                         )
                     }
+                </div>
+                <div className={classNames({hide: !message.get('file')})}>
+                    <img src={(message.get('file') || Immutable.Map({})).get('url_private')} alt=""/>
                 </div>
             </div>
         </div>
@@ -142,9 +145,10 @@ class SlackFeedWrapper extends Component {
         if (userTagIndexStart > -1){
             multiParse = true;
             let split = returnText.substr(userTagIndexStart, bodyText.indexOf('>', userTagIndexStart) - userTagIndexStart + 1);
+
             let user = this.props.userList.find(obj => obj.get('id') === split.substr(2, split.length - 3));
 
-            returnText = returnText.split(split).join('@' + (user.get('real_name').split(' ').join(''))).trim();
+            returnText = user ? returnText.split(split).join('@' + (user.get('real_name').split(' ').join(''))).trim() : '';
         }
 
         while (returnText.substr(returnText.length - 1).trim() === ','){
