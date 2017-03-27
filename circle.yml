@@ -1,29 +1,23 @@
 machine:
-  environment:
-    PATH: ${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin
-    NODE_ENV: test
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
   services:
     - docker
-  node:
-    version: 5.1.0
+  environment:
+    AWS_DEFAULT_REGION: "us-east-1"
 
 dependencies:
-  cache_directories:
-    - node_modules
   override:
-#    - npm install -g gulp
-    - npm prune && npm install
+    - docker run --rm -v "$PWD":/app -e "BINTRAY_USER=${BINTRAY_USER}" -e "BINTRAY_PASSWORD=${BINTRAY_PASSWORD}" -w /app driveclutch/builder-gulp build
+  cache_directories:
+    - "node_modules"
 
 test:
   override:
-    - gulp
-  post:
-    - unzip ${HOME}/${CIRCLE_PROJECT_REPONAME}/dist/clutch-slack-feed.zip -d ${HOME}/${CIRCLE_PROJECT_REPONAME}/dist/slack-line
+    - echo "No tests?"
 
 deployment:
-  docker_hub:
+  snapshot:
     branch: master
     commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker build -t driveclutch/slack-line:latest .
-      - docker push driveclutch/slack-line:latest
+      - tools/docker.sh

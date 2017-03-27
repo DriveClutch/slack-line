@@ -57,7 +57,7 @@ var webpackConfig = {
                 //    path.resolve(__dirname, "src"),
                 //],
                 include: [
-                    path.resolve(__dirname, "node_modules/clutch-ui-common"),
+                    path.resolve(__dirname, "node_modules/@clutch/clutch-ui-common"),
                     path.resolve(__dirname, "app"),
                     path.resolve(__dirname, "config"),
                     path.resolve(__dirname, "redux"),

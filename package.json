@@ -12,7 +12,7 @@
     "babel-polyfill": "^6.3.14",
     "body-parser": "^1.15.0",
     "classnames": "^2.2.3",
-    "clutch-ui-common": "git+https://github.com/DriveClutch/clutch-ui-common.git",
+    "@clutch/clutch-ui-common": "git+https://github.com/DriveClutch/clutch-ui-common.git",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "font-awesome": "^4.5.0",
