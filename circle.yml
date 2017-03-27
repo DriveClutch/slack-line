@@ -11,6 +11,8 @@ dependencies:
     - docker run --rm -v "$PWD":/app -e "BINTRAY_USER=${BINTRAY_USER}" -e "BINTRAY_PASSWORD=${BINTRAY_PASSWORD}" -w /app driveclutch/builder-gulp build
   cache_directories:
     - "node_modules"
+  post:
+    - unzip ${HOME}/${CIRCLE_PROJECT_REPONAME}/dist/clutch-slack-feed.zip -d ${HOME}/${CIRCLE_PROJECT_REPONAME}/dist/slack-line
 
 test:
   override:
