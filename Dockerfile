@@ -4,6 +4,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY server-package.json /usr/src/app/package.json
+COPY app/favicon.ico /usr/src/app/
 RUN npm install
 COPY dist/slack-line/server.js /usr/src/app/
 COPY dist/slack-line/index.ejs /usr/src/app/

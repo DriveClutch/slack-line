@@ -1,3 +1,4 @@
 *
 !server-package.json
 !dist/slack-line
+!app/favicon.ico

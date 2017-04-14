@@ -76,6 +76,10 @@ app.post('/api/groupHistory', function (req, res) {
     })
 });
 
+app.get('/favicon.ico', function(req, res) {
+  res.sendFile(path.join(__dirname + '/favicon.ico'));
+});
+
 app.get('/', function(req, res){
     res.render(path.join(__dirname + '/index.ejs'), {
         slackClientId: process.env.SLACK_CLIENT_ID,
@@ -84,6 +88,7 @@ app.get('/', function(req, res){
     });
 });
 
+/*
 app.use(function(req, res){
     if (req.url.substr(0, 4) === '/api'){
         return res.status(404).send();
@@ -91,6 +96,7 @@ app.use(function(req, res){
 
     res.redirect('/');
 })
+*/
 
 app.listen(3333, function () {
     console.log('Example app listening on port 3333!');
