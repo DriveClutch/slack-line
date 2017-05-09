@@ -22,7 +22,8 @@ function setup_ecr_repo() {
           "arn:aws:iam::882831108660:root",
           "arn:aws:iam::543661694755:root",
           "arn:aws:iam::790280700559:root",
-          "arn:aws:iam::693451398936:root"
+          "arn:aws:iam::693451398936:root",
+          "arn:aws:iam::183927706744:root"
         ]
       },
       "Action": [
