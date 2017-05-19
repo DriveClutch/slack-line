@@ -84,7 +84,7 @@ app.get('/', function(req, res){
     res.render(path.join(__dirname + '/index.ejs'), {
         slackClientId: process.env.SLACK_CLIENT_ID,
         slackClientChannels: process.env.SLACK_CLIENT_CHANNELS,
-        redirectUrl: process.env.SLACK_REDIRECT_URI || 'http://localhost:3333/'
+        redirectUrl: encodeURIComponent(process.env.SLACK_REDIRECT_URI || 'http://localhost:3333/')
     });
 });
 

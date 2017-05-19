@@ -1,5 +1,5 @@
 import { createStore as _createStore, applyMiddleware, compose, combineReducers } from 'redux';
-import { routerMiddleware, routeReducer } from 'react-router-redux'
+import { routerMiddleware, routerReducer } from 'react-router-redux'
 import { browserHistory } from 'react-router'
 import createMiddleware from '@clutch/clutch-ui-common/middleware/clientMiddleware';
 import transitionMiddleware from '@clutch/clutch-ui-common/middleware/transitionMiddleware';
@@ -12,7 +12,7 @@ export default function createStore(client) {
 
     let finalCreateStore = applyMiddleware(...middleware)(_createStore);
     let r = Object.assign({}, reducers, {
-        routing: routeReducer
+        routing: routerReducer
     });
     const store = finalCreateStore(combineReducers(r));
 

@@ -25,7 +25,7 @@ function requireAuth(nextState, replace) {
     if (param){
         window.SLACK_AUTH_CODE = param;
         replace('/home')
-    } else if (token) {
+    } else if (token && token !== "undefined") {
         window.SLACK_TOKEN = token;
         replace('/home')
     } else {
