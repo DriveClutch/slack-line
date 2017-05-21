@@ -117,7 +117,7 @@ gulp.task('dev', function () {
     process.env.NODE_ENV = 'development';
     // set up config alias so webpack pulls in the development config
     webpackConfig.resolve.alias.config = path.join(__dirname, 'config', process.env.NODE_ENV);
-    return runSequence('webpack', 'copy-index', 'copy-server', 'watch', 'node-server');
+    return runSequence('webpack', 'copy-index', 'copy-favicon', 'copy-server', 'watch', 'node-server');
 });
 
 gulp.task('dev-noserver', function () {
@@ -136,6 +136,11 @@ gulp.task('watch', function () {
 
 gulp.task('copy-index', function(){
     return gulp.src('./app/index.ejs')
+        .pipe(gulp.dest(paths.DEST_BUILD))
+});
+
+gulp.task('copy-favicon', function(){
+    return gulp.src('./app/favicon.ico')
         .pipe(gulp.dest(paths.DEST_BUILD))
 });
 
