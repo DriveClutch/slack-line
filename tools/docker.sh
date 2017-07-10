@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/bash -e
 
-REGISTRY_HOSTNAME="458132236648.dkr.ecr.us-east-1.amazonaws.com"
+ECR_HOSTNAME="458132236648.dkr.ecr.us-east-1.amazonaws.com"
+export AWS_DEFAULT_REGION="us-east-1"
 
 function setup_ecr_repo() {
-  L_PRJ_NAME=$1
-  L_REPOSITORY_NAME=$2
+  local app=$1
+  local repo=$2
 
-  POLICY_FILENAME="ecrpolicy.json"
-  export AWS_DEFAULT_REGION="us-east-1"
+  local POLICY_FILENAME="ecrpolicy.json"
 
   cat <<EOM > ${POLICY_FILENAME}
 {
@@ -36,51 +36,65 @@ function setup_ecr_repo() {
 }
 EOM
 
-  echo "${L_PRJ_NAME} Checking for ECR repo ${L_REPOSITORY_NAME}"
-  aws ecr describe-repositories --repository-name ${L_REPOSITORY_NAME}
-  if [ "$?" != "0" ]; then
-    echo "${L_PRJ_NAME} Did not find repo, creating ${L_REPOSITORY_NAME}"
-    aws ecr create-repository --repository-name ${L_REPOSITORY_NAME}
+  echo "${app} Checking for ECR repo ${repo}"
+  set +e # Turn off failure dumping
+  aws ecr describe-repositories --repository-name ${repo}
+  RET=$?
+  set -e # Turn on failure dumping
+  if [ "$RET" != "0" ]; then
+    echo "${app} Did not find repo, creating ${repo}"
+    aws ecr create-repository --repository-name ${repo}
   fi
-  echo "${L_PRJ_NAME} Setting repo policy"
-  aws ecr set-repository-policy --repository-name ${L_REPOSITORY_NAME} --policy-text file://${POLICY_FILENAME}
+  echo "${app} Setting repo policy"
+  aws ecr set-repository-policy --repository-name ${repo} --policy-text file://${POLICY_FILENAME}
 }
 
 function docker_build_tag_push() {
-  L_PRJ_NAME=$1
-  L_BUILD_DIR=$2
-  L_IMAGE_NAME_GITHASH=$3
-  L_IMAGE_NAME_LATEST=$4
+  local app=$1
+  local builddir=$2
+  local hashedimagetag=$3
+  local latestimagetag=$4
 
+  echo "${app} Building docker image"
+  docker build                               \
+	  -t ${hashedimagetag}                   \
+	  -t ${latestimagetag}                   \
+	  ${builddir}
 
-  echo "${L_PRJ_NAME} Building docker image"
-  docker build -t ${L_IMAGE_NAME_GITHASH} -t ${L_IMAGE_NAME_LATEST} ${L_BUILD_DIR}
-
-  echo "Pushing ${L_IMAGE_NAME_GITHASH} to ECR"
-  docker push ${L_IMAGE_NAME_GITHASH}
-  echo "Pushing ${L_IMAGE_NAME_LATEST} to ECR"
-  docker push ${L_IMAGE_NAME_LATEST}
+  echo "Pushing ${hashedimagetag} to ECR"
+  docker push ${hashedimagetag}
+  echo "Pushing ${latestimagetag} to ECR"
+  docker push ${latestimagetag}
 }
 
-eval $(aws ecr get-login --region us-east-1)
+# Login to the ECR repo
+eval $(aws ecr get-login)
 
-if [ -f "Dockerfile" ]; then
-  PRJ_NAME="$(basename ${PWD})"
-  REPOSITORY_NAME="${CIRCLE_BRANCH:-master}/${PRJ_NAME}"
-  IMAGE_NAME_LATEST="${REGISTRY_HOSTNAME}/${REPOSITORY_NAME}:latest"
-  IMAGE_NAME_GITHASH="${REGISTRY_HOSTNAME}/${REPOSITORY_NAME}:${CIRCLE_SHA1}"
+# Look for all the Dockerfiles, exclude the vendor directory for Go projects and node_modules for NodeJS projects
+for dockerfile in $(find . -not -path "./vendor/*" -not -path "./node_modules/*" -name Dockerfile)
+do
+	# Use the parent directory of the Dockerfile as the appname
+	appname=$(basename $(dirname $dockerfile))
+	# Set the relative path to the Dockerfile for building
+	dockerdir=$(dirname $dockerfile)
 
-  setup_ecr_repo ${PRJ_NAME} ${REPOSITORY_NAME}
-  docker_build_tag_push ${PRJ_NAME} . ${IMAGE_NAME_GITHASH} ${IMAGE_NAME_LATEST}
-else
-  for prj in */Dockerfile
-  do
-    PRJ_NAME="$(dirname ${prj})"
-    REPOSITORY_NAME="${CIRCLE_BRANCH:-master}/${PRJ_NAME}"
-    IMAGE_NAME_LATEST="${REGISTRY_HOSTNAME}/${REPOSITORY_NAME}:latest"
-    IMAGE_NAME_GITHASH="${REGISTRY_HOSTNAME}/${REPOSITORY_NAME}:${CIRCLE_SHA1}"
+	if [[ $appname == "." ]]; then
+		# Dockerfile is at the repo root, update the appname to the name of the repo
+		appname=$(basename $PWD)
+	else
+		# If the appname is not "." then it is not in the root of the repo, so add a slash to the dockerdir
+		dockerdir="${dockerdir}/"
+	fi
 
-    setup_ecr_repo ${PRJ_NAME} ${REPOSITORY_NAME}
-    docker_build_tag_push ${PRJ_NAME} "${PRJ_NAME}/" ${IMAGE_NAME_GITHASH} ${IMAGE_NAME_LATEST}
-  done
-fi
+	# set the name of the ecr repo inside the registry
+	ecrreponame="${CIRCLE_BRANCH:-master}/${appname}"
+	# Set the fully qualified repo rul
+	urlbase="${ECR_HOSTNAME}/${ecrreponame}"
+	# Set the git hash of the build (NOTE: using localbuild for non CircleCI builds on purpose)
+	buildhash=${CIRCLE_SHA1:-localbuild}
+
+	# Make sure the repo exists and has the correct pull permissions for all the accounts
+	setup_ecr_repo ${appname} ${ecrreponame}
+	# Build the Docker and push it to ECR
+	docker_build_tag_push ${appname} ${dockerdir} ${urlbase}:${buildhash} ${urlbase}:latest
+done
